@@ -21,7 +21,6 @@ let snake = [{
 }]
 
 let score = 0;
-let changing_direction = false;
 let food_x;
 let food_y;
 let dx = 10;
@@ -34,17 +33,15 @@ main();
 
 gen_food();
 
-document.addEventListener("keydown", change_direction);
-
 function main() {
 
     if (has_game_ended()) return;
 
-    changing_direction = false;
     setTimeout(function onTick() {
         clear_board();
         drawFood();
         move_snake();
+        change_direction()
         drawSnake();
         main();
     }, 100)
@@ -78,6 +75,7 @@ function drawSnakePart(snakePart) {
 }
 
 function has_game_ended() {
+
     for (let i = 4; i < snake.length; i++) {
         if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) return true
     }
@@ -101,34 +99,31 @@ function gen_food() {
     });
 }
 
-function change_direction(event) {
-    const LEFT_KEY = 37;
-    const RIGHT_KEY = 39;
-    const UP_KEY = 38;
-    const DOWN_KEY = 40;
+function change_direction() {
 
-    if (changing_direction) return;
-    changing_direction = true;
-    const keyPressed = event.keyCode;
     const goingUp = dy === -10;
     const goingDown = dy === 10;
     const goingRight = dx === 10;
     const goingLeft = dx === -10;
-    if (keyPressed === LEFT_KEY && !goingRight) {
+    if (snake[0].x > food_x && !goingRight) {
         dx = -10;
         dy = 0;
     }
-    if (keyPressed === UP_KEY && !goingDown) {
-        dx = 0;
-        dy = -10;
-    }
-    if (keyPressed === RIGHT_KEY && !goingLeft) {
+    if (snake[0].x < food_x && !goingLeft) {
         dx = 10;
         dy = 0;
     }
-    if (keyPressed === DOWN_KEY && !goingUp) {
+    if (snake[0].y > food_y && !goingDown) {
+        dx = 0;
+        dy = -10;
+    }
+    if (snake[0].y < food_y && !goingUp) {
         dx = 0;
         dy = 10;
+    }
+    if (snake[0].x === food_x && !food_y) {
+        dx = 0;
+        dy = -10;
     }
 }
 
